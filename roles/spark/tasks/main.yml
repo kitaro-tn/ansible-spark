@@ -1,4 +1,13 @@
 ---
+- name: install dependencies
+  package: name={{ item }} state=latest
+  with_items:
+    - libselinux-python
+    - zlib-devel
+    - openssl-devel
+    - perl-ExtUtils-MakeMaker
+    - gcc
+
 - name: install java
   package: name=java-{{ java_version.redhat }}-openjdk state=latest
   when: ansible_os_family == "RedHat"
@@ -7,11 +16,11 @@
   package: name=openjdk-{{ java_version.debian }}-jre state=latest
   when: ansible_os_family == "Debian"
 
-- name: install hadoop
-  unarchive:
-    src: http://ftp.jaist.ac.jp/pub/apache/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz
-    dest: /usr/local/src
-    remote_src: True
+# - name: install hadoop
+#   unarchive:
+#     src: http://ftp.jaist.ac.jp/pub/apache/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz
+#     dest: /usr/local/src
+#     remote_src: True
 
 - name: install spark
   unarchive:
@@ -19,8 +28,37 @@
     dest: /usr/local/src
     remote_src: True
 
+- name: unarchive python
+  unarchive:
+    src: https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz
+    dest: /usr/local/src
+    remote_src: True
+
+- name: install python
+  shell: ./configure && make && make install
+  args:
+    chdir: /usr/local/src/Python-2.7.13
+
+- name: unarchive scala
+  unarchive:
+    src: https://downloads.lightbend.com/scala/2.11.11/scala-2.11.11.tgz
+    dest: /usr/local/src
+    remote_src: True
+
+- name: install sbt rpm
+  shell: curl https://bintray.com/sbt/rpm/rpm | sudo tee /etc/yum.repos.d/bintray-sbt-rpm.repo
+
+- name: install sbt
+  package: name=sbt state=latest
+
 - name: setting env
   copy:
     src: spark-env.sh
     dest: /etc/profile.d/spark-env.sh
     mode: 644
+
+- name: start spark
+  shell: "{{ item }}"
+  with_items:
+    - /usr/local/src/spark-2.1.1-bin-hadoop2.7/sbin/stop-master.sh
+    - /usr/local/src/spark-2.1.1-bin-hadoop2.7/sbin/start-master.sh

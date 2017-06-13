@@ -2,4 +2,4 @@
 *.swo
 .DS_Sotore
 .vagrant
-spark-playbook.retry
+*.retry
