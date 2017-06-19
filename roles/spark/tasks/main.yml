@@ -10,6 +10,11 @@
     - openssl-devel
     - perl-ExtUtils-MakeMaker
     - gcc
+    - lapack-devel
+    - freetype
+    - freetype-devel
+    - libpng-devel
+    - python-devel
 
 - name: install java
   package: name=java-{{ java_version.redhat }}-openjdk state=latest
@@ -41,6 +46,16 @@
   shell: ./configure && make && make install
   args:
     chdir: /usr/local/src/Python-2.7.13
+
+- name: install pip
+  shell: curl -kL https://bootstrap.pypa.io/get-pip.py | python
+
+- name: install python mlib dependencies
+  pip: name={{ item }}
+  with_items:
+    - numpy
+    - pandas
+    - matplotlib
 
 - name: unarchive scala
   unarchive:
