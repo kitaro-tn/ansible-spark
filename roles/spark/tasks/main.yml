@@ -51,11 +51,12 @@
   shell: curl -kL https://bootstrap.pypa.io/get-pip.py | python
 
 - name: install python mlib dependencies
-  pip: name={{ item }}
+  pip: name={{ item }} extra_args="--user"
   with_items:
     - numpy
     - pandas
     - matplotlib
+  become: False
 
 - name: unarchive scala
   unarchive:
