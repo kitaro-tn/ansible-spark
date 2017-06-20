@@ -10,11 +10,16 @@
     - openssl-devel
     - perl-ExtUtils-MakeMaker
     - gcc
+    - readline
+    - readline-devel
     - lapack-devel
     - freetype
     - freetype-devel
     - libpng-devel
     - python-devel
+    - python-setuptools
+    - ncurses-devel
+    - patch
 
 - name: install java
   package: name=java-{{ java_version.redhat }}-openjdk state=latest
@@ -56,6 +61,7 @@
     - numpy
     - pandas
     - matplotlib
+    - readline
   become: False
 
 - name: unarchive scala
