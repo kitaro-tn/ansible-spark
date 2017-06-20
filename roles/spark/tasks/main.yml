@@ -37,20 +37,20 @@
 
 - name: install spark
   unarchive:
-    src: https://d3kbcqa49mib13.cloudfront.net/spark-2.1.1-bin-hadoop2.7.tgz
+    src: https://d3kbcqa49mib13.cloudfront.net/{{ spark_relase_name }}.tgz
     dest: /usr/local/src
     remote_src: True
 
 - name: unarchive python
   unarchive:
-    src: https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz
+    src: https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz
     dest: /usr/local/src
     remote_src: True
 
 - name: install python
   shell: ./configure && make && make install
   args:
-    chdir: /usr/local/src/Python-2.7.13
+    chdir: /usr/local/src/Python-{{ python_version }}
 
 - name: install pip
   shell: curl -kL https://bootstrap.pypa.io/get-pip.py | python
@@ -66,7 +66,7 @@
 
 - name: unarchive scala
   unarchive:
-    src: https://downloads.lightbend.com/scala/2.11.11/scala-2.11.11.tgz
+    src: https://downloads.lightbend.com/scala/{{ scala_version }}/scala-{{ scala_version }}.tgz
     dest: /usr/local/src
     remote_src: True
 
@@ -85,5 +85,5 @@
 - name: start spark
   shell: "{{ item }}"
   with_items:
-    - /usr/local/src/spark-2.1.1-bin-hadoop2.7/sbin/stop-master.sh
-    - /usr/local/src/spark-2.1.1-bin-hadoop2.7/sbin/start-master.sh
+    - /usr/local/src/{{ spark_relase_name }}/sbin/stop-master.sh
+    - /usr/local/src/{{ spark_relase_name }}/sbin/start-master.sh
