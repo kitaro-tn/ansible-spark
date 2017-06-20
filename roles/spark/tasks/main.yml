@@ -5,6 +5,7 @@
 - name: install dependencies
   package: name={{ item }} state=latest
   with_items:
+    - unzip
     - libselinux-python
     - zlib-devel
     - openssl-devel
@@ -87,3 +88,13 @@
   with_items:
     - /usr/local/src/{{ spark_relase_name }}/sbin/stop-master.sh
     - /usr/local/src/{{ spark_relase_name }}/sbin/start-master.sh
+
+- name: create spark-training directory
+  shell: mkdir -p /home/{{ user }}/spark-training
+  become: False
+
+- name: dest training data
+  unarchive:
+    src: training.zip
+    dest: /home/{{ user }}/spark-training
+  become: False
