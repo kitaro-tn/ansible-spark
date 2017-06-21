@@ -36,6 +36,25 @@
 #     dest: /usr/local/src
 #     remote_src: True
 
+- name: dest mysql rpm
+  copy:
+    src: mysql57-community-release-el7-11.noarch.rpm
+    dest: /usr/local/lib
+
+- name: rpm install mysql
+  package: name=/usr/local/lib/mysql57-community-release-el7-11.noarch.rpm state=present
+
+- name: enable mysql57
+  shell: yum-config-manager --enable mysql57-community
+
+- name: install mysql
+  package: name={{ item }} state=latest
+  with_items:
+    - mysql-community-server
+    - mysql-community-devel
+    - mysql-community-client
+    - mysql-community-libs
+
 - name: install spark
   unarchive:
     src: https://d3kbcqa49mib13.cloudfront.net/{{ spark_relase_name }}.tgz
