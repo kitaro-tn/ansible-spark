@@ -112,7 +112,17 @@
   copy:
     src: spark-env.sh
     dest: /etc/profile.d/spark-env.sh
-    mode: 644
+    mode: 0644
+    owner: root
+    group: root
+
+- name: dest config xml
+  copy:
+    src: gcs-core-default.xml
+    dest: /usr/local/src/{{ spark_relase_name }}/conf/gcs-core.xml
+    mode: 0644
+    owner: "{{ user }}"
+    group: "{{ user }}"
 
 - name: start spark
   shell: "{{ item }}"
@@ -128,6 +138,6 @@
   unarchive:
     src: training.zip
     dest: /home/{{ user }}/spark-training
+    owner: "{{ user }}"
+    group: "{{ user }}"
   become: False
-  owner: "{{ user }}"
-  group: "{{ user }}"
