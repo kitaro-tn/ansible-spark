@@ -47,6 +47,11 @@
 - name: enable mysql57
   shell: yum-config-manager --enable mysql57-community
 
+- name: dest mysql jdbc driver
+  unarchive:
+    src: mysql-connector-java-5.1.42.tar.gz
+    dest: /usr/local/lib
+
 - name: install mysql
   package: name={{ item }} state=latest
   with_items:
@@ -60,12 +65,16 @@
     src: https://d3kbcqa49mib13.cloudfront.net/{{ spark_relase_name }}.tgz
     dest: /usr/local/src
     remote_src: True
+    owner: "{{ user }}"
+    group: "{{ user }}"
 
 - name: unarchive python
   unarchive:
     src: https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz
     dest: /usr/local/src
     remote_src: True
+    owner: "{{ user }}"
+    group: "{{ user }}"
 
 - name: install python
   shell: ./configure && make && make install
@@ -74,6 +83,7 @@
 
 - name: install pip
   shell: curl -kL https://bootstrap.pypa.io/get-pip.py | python
+  become: False
 
 - name: install python mlib dependencies
   pip: name={{ item }} extra_args="--user"
@@ -89,6 +99,8 @@
     src: https://downloads.lightbend.com/scala/{{ scala_version }}/scala-{{ scala_version }}.tgz
     dest: /usr/local/src
     remote_src: True
+    owner: "{{ user }}"
+    group: "{{ user }}"
 
 - name: install sbt rpm
   shell: curl https://bintray.com/sbt/rpm/rpm | sudo tee /etc/yum.repos.d/bintray-sbt-rpm.repo
@@ -117,3 +129,5 @@
     src: training.zip
     dest: /home/{{ user }}/spark-training
   become: False
+  owner: "{{ user }}"
+  group: "{{ user }}"
