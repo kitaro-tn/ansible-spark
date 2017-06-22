@@ -30,11 +30,23 @@
   package: name=openjdk-{{ java_version.debian }}-jre state=latest
   when: ansible_os_family == "Debian"
 
-# - name: install hadoop
-#   unarchive:
-#     src: http://ftp.jaist.ac.jp/pub/apache/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz
-#     dest: /usr/local/src
-#     remote_src: True
+- name: install hadoop
+  unarchive:
+    src: http://ftp.jaist.ac.jp/pub/apache/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz
+    dest: /usr/local/src
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    remote_src: True
+
+- name: set hadoop conf
+  copy:
+    src: "{{ item }}"
+    dest: /usr/local/src/hadoop-2.7.3/etc/hadoop
+    mode: 0644
+  with_items:
+    - core-site.xml
+    - hdfs-site.xml
+    - yarn-site.xml
 
 - name: dest mysql rpm
   copy:
@@ -123,6 +135,12 @@
     mode: 0644
     owner: "{{ user }}"
     group: "{{ user }}"
+
+# - name: start hadoop
+#   shell: "{{ item }}"
+#   with_items:
+#     - export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-3.b12.el7_3.x86_64/jre && /usr/local/src/hadoop-2.7.3/sbin/stop-all.sh
+#     - export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-3.b12.el7_3.x86_64/jre && /usr/local/src/hadoop-2.7.3/sbin/start-all.sh
 
 - name: start spark
   shell: "{{ item }}"
