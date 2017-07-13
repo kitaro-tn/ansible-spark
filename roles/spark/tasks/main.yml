@@ -1,4 +1,10 @@
 ---
+- name: set locale.conf
+  template: src=locale.conf.j2 dest=/etc/locale.conf group=root owner=root mode=0644
+
+- name: set localtime
+  file: src={{ zoneinfo_path }} dest=/etc/localtime state=link force=yes
+
 - name: update packages
   package: name=* state=latest
 
@@ -21,6 +27,23 @@
     - python-setuptools
     - ncurses-devel
     - patch
+
+- name: reset date time
+  shell: ntpdate ntp.nict.jp
+
+- name: dest chrony conf
+  copy:
+    src: chrony.conf
+    dest: /etc/chrony.conf
+    mode: 0644
+    owner: root
+    group: root
+
+- name: chrony start
+  service:
+    name: chronyd
+    enabled: yes
+    state: started
 
 - name: install java
   package: name=java-{{ java_version.redhat }}-openjdk state=latest
